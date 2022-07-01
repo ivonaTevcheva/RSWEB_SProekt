@@ -1,9 +1,22 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using RSWEB_SProekt.Data;
+using RSWEB_SProekt.Models;
+
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<RSWEB_SProektContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("RSWEB_SProektContext") ?? throw new InvalidOperationException("Connection string 'RSWEB_SProektContext' not found.")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    SeedData.Initialize(services);
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

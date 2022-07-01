@@ -16,6 +16,11 @@ a {
   background-color: #1b6ec2;
   border-color: #1861ac;
 }
+.nav-item:hover, .nav-item:hover, .nav-item:hover, .nav-item:hover {
+    color: #fff;
+    background-color: #ec4116;
+    border-color: rgb(102, 153, 153); /*set the color you want here*/
+}
 
 .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
   color: #fff;
