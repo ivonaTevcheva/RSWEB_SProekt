@@ -1,14 +1,55 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using RSWEB_SProekt.Areas.Identity.Data;
 using RSWEB_SProekt.Data;
 
 namespace RSWEB_SProekt.Models
 {
     public class SeedData
     {
+        public static async Task CreateUserRoles(IServiceProvider serviceProvider)
+        {
+            var RoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var UserManager = serviceProvider.GetRequiredService<UserManager<RSWEB_SProektUser>>();
+            IdentityResult roleResult;
+            //Add Admin Role
+            var roleCheck = await RoleManager.RoleExistsAsync("Admin");
+            if (!roleCheck) { roleResult = await RoleManager.CreateAsync(new IdentityRole("Admin")); }
+            RSWEB_SProektUser user = await UserManager.FindByEmailAsync("admin@admin.com");
+            if (user == null)
+            {
+                var User = new RSWEB_SProektUser();
+                User.Email = "admin@admin.com";
+                User.UserName = "admin@admin.com";
+                string userPWD = "Admin123";
+                IdentityResult chkUser = await UserManager.CreateAsync(User, userPWD);
+                //Add default User to Role Admin
+                if (chkUser.Succeeded) { var result1 = await UserManager.AddToRoleAsync(User, "Admin"); }
+            }
+            //Add User Role
+            roleCheck = await RoleManager.RoleExistsAsync("User");
+            if (!roleCheck) { roleResult = await RoleManager.CreateAsync(new IdentityRole("User")); }
+                user = await UserManager.FindByEmailAsync("user@user.com");
+                if (user == null)
+                {
+                    var User = new RSWEB_SProektUser();
+                    User.Email = "user@user.com";
+                    User.UserName = "user@user.com";
+                    string userPWD = "User1234";
+                    IdentityResult chkUser = await UserManager.CreateAsync(User, userPWD);
+                    //Add default User to Role Admin
+                    if (chkUser.Succeeded) { var result1 = await UserManager.AddToRoleAsync(User, "User"); 
+                }
+            }
+        }
+
+
         public static void Initialize(IServiceProvider serviceProvider)
         {
             using (var context = new RSWEB_SProektContext(serviceProvider.GetRequiredService<DbContextOptions<RSWEB_SProektContext>>()))
             {
+                CreateUserRoles(serviceProvider).Wait();
+
                 // Look for any movies.
                 if (context.Book.Any() || context.Author.Any())
                 {
@@ -18,9 +59,9 @@ namespace RSWEB_SProekt.Models
                 new Author { /*Id = 1, */FirstName = "Себастијан", LastName = "Фицек", BirthDate = DateTime.Parse("1971-10-13"), Nationality = "Германец" },
                 new Author { /*Id = 2, */FirstName = "Сара", LastName = "Адисон Ален", BirthDate = DateTime.Parse("1971-11-27"), Nationality = "Американец" },
                 new Author { /*Id = 3, */FirstName = "Емили", LastName = "Гифин", BirthDate = DateTime.Parse("1972-5-30"), Nationality = "Американец" },
-                new Author { /*Id = 1, */FirstName = "Мирјана", LastName = "Проданова", BirthDate = DateTime.Parse("1978-3-6"), Nationality = "Македонец" },
-                new Author { /*Id = 2, */FirstName = "Колин", LastName = "Хувер", BirthDate = DateTime.Parse("1979-11-27"), Nationality = "Американец" },
-                new Author { /*Id = 3, */FirstName = "Џон", LastName = "Грин", BirthDate = DateTime.Parse("1971-5-30"), Nationality = "Американец" }
+                new Author { /*Id = 4, */FirstName = "Мирјана", LastName = "Проданова", BirthDate = DateTime.Parse("1978-3-6"), Nationality = "Македонец" },
+                new Author { /*Id = 5, */FirstName = "Колин", LastName = "Хувер", BirthDate = DateTime.Parse("1979-11-27"), Nationality = "Американец" },
+                new Author { /*Id = 6, */FirstName = "Џон", LastName = "Грин", BirthDate = DateTime.Parse("1971-5-30"), Nationality = "Американец" }
 
                 );
                 context.SaveChanges();

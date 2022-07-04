@@ -5,10 +5,12 @@
 }
 
 <h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+@if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+{
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+}
 <form asp-controller="Books" asp-action="Index" method="get">
 <p>
 Наслов: <input type="text" asp-for="TitleString" />
@@ -71,12 +73,27 @@
                 @Html.DisplayFor(modelItem => item.NumberOfPages)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Author.FullName)
+                <a asp-controller="Authors" asp-action="Details" asp-route-id="@item.AuthorId">@Html.DisplayFor(modelItem => item.Author.FullName)</a>
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                {
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                    @Html.Raw("|");
+                }
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                {
+                    @Html.Raw("|");
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                }
+                @if (User.Identity.IsAuthenticated && User.IsInRole("User"))
+                {
+                    @Html.Raw("|");
+                    <a asp-action="KupiKniga" asp-route-id="@item.Id" class="btn btn-danger">Купи книга</a>
+                }
+
+
             </td>
         </tr>
 }

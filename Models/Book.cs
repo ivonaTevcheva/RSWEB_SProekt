@@ -10,7 +10,7 @@ namespace RSWEB_SProekt.Models
         [Required]
         [Display(Name = "Наслов")]
         public string Title { get; set; }
-        [Display(Name = "Датум на издавање")]
+        [Display(Name = "Година на издавање")]
         public int? ReleaseDate { get; set; }
        
         [StringLength(30, MinimumLength = 3)]
